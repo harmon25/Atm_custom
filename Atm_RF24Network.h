@@ -20,12 +20,9 @@
     public:
       //ATM States, Events, Actions, Messages
       enum { IDLE, RECIEVING, SENDING, PINGING } STATES;
-      enum { EVT_NEW_MSG, EVT_SEND_MSG, EVT_PING, ELSE } EVENTS;
-      enum { UPDATE_NETWORK, RECV_MSG, SEND_MSG, PING } ACTIONS;
-      enum { SEND, MSG_END } MESSAGES;
-      
-      atm_msg_t messages[MSG_END];
-
+      enum { EVT_NEW_MSG, EVT_PING, ELSE } EVENTS;
+      enum { UPDATE_NETWORK, RECV_MSG, PING } ACTIONS;
+           
       atm_timer_millis ping_timer;
       // constructor, passes network by ref
       Atm_RF24Network( RF24Network &net ): _network(net), Machine() { class_label = "NETWORK"; } ;

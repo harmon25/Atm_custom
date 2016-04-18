@@ -4,18 +4,16 @@
 Atm_RF24Network & Atm_RF24Network::begin(uint16_t node_addr)
 {
   const static state_t state_table[] PROGMEM = {
-  /*                  ON_ENTER      ON_LOOP  ON_EXIT   EVT_NEW_MSG     EVT_SEND_MSG  EVT_PING     ELSE */
-  /* IDLE  */         -1,    UPDATE_NETWORK,   -1,      RECV_MSG,       SEND_MSG,      PING,        -1,
-  /* RECIEVING */  RECV_MSG,          -1,      -1,        -1,           -1,            -1,          IDLE,
-  /* SENDING */    SEND_MSG,          -1,      -1,        -1,           -1,            -1,          IDLE,
-  /* PINGING */    PING,              -1,      -1,        -1,           -1,            -1,          IDLE,
+  /*               ON_ENTER         ON_LOOP      ON_EXIT   EVT_NEW_MSG     EVT_PING       ELSE */
+  /* IDLE  */            -1,    UPDATE_NETWORK,   -1,      RECIEVING,         PINGING,         -1,
+  /* RECIEVING */  RECV_MSG,         -1,          -1,        -1,               -1,         IDLE,
+  /* SENDING */          -1,         -1,          -1,        -1,               -1,         IDLE,
+  /* PINGING */        PING,         -1,          -1,        -1,               -1,         IDLE,
 
    };
    // begin rf24network, with node address param
   _network.begin(node_addr);
   
-  // msgqueue for triggering the SEND event
-  Machine::msgQueue( messages, MSG_END, 1 );
   
   // begin machine
   Machine::begin( state_table, ELSE );
@@ -49,9 +47,6 @@ int Atm_RF24Network::event(int id)
       // if network is available, got a new message
       case EVT_NEW_MSG :
         return _network.available();
-      // if we have a SEND message in the queue
-      case EVT_SEND_MSG :
-        return msgRead( SEND );
       // when our ping timer has expired
       case EVT_PING :
         return ping_timer.expired();
@@ -93,12 +88,6 @@ void Atm_RF24Network::action(int id)
       }
       return;
     }
-    // 
-    case SEND_MSG :
-      // read data from a global buffer and pass it to network?
-      Serial.println("SEND_MSG Action");
-      return;
-
     case PING :
      Serial.println("SEND_PING Action");
       if(ping_cb) { (*ping_cb)( ); }
@@ -108,6 +97,6 @@ void Atm_RF24Network::action(int id)
 
 Atm_RF24Network & Atm_RF24Network::onSwitch(swcb_sym_t switch_callback)
 {
-  Machine::onSwitch( switch_callback, "IDLE\0RECIEVING\0SENDING\0PINGING", "EVT_NEW_MSG\0EVT_SEND_MSG\0EVT_PING\0ELSE" );
+  Machine::onSwitch( switch_callback, "IDLE\0RECIEVING\0SENDING\0PINGING", "EVT_NEW_MSG\0EVT_PING\0ELSE" );
   return *this;
 }
