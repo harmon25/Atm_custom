@@ -1,6 +1,9 @@
 #ifndef Atm_RF24Network_h
 #define Atm_RF24Network_h
-
+  
+  #include <SPI.h>
+  #include <RF24Network.h>
+  #include <RF24.h>
   #include <Automaton.h>
   #include <RF24Network.h>
 
