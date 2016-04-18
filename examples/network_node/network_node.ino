@@ -31,7 +31,9 @@ void setup()
   atm_net.onMsg(msgcb);
   // begin RF24Network within machine, pass nodes address
   atm_net.begin(04);
-  
+  delay(250);
+  char pl[] = "test payload"
+  atm_net.send(pl, sizeof(pl));
   // debugging
   atm_net.onSwitch(atm_serial_debug::onSwitch);
 }

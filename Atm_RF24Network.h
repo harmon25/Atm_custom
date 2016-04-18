@@ -38,6 +38,8 @@
       // null ptr to be assigned message handler callback
       void (*callback)( ) = 0;
 
+      bool send(char* payload, size_t payload_len );
+
       // to register ping callback
       Atm_RF24Network & onPing( pingcb_t msg_callback );
 

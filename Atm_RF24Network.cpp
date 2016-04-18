@@ -60,6 +60,13 @@ int Atm_RF24Network::event(int id)
    return 0;
 }
 
+bool Atm_RF24Network::send(char* payload, size_t payload_len )
+{
+  this->state(this->SENDING);
+  RF24NetworkHeader header(00, 1);
+  return _network.write(header, payload, payload_len);
+}
+
 void Atm_RF24Network::action(int id)
 {
  switch ( id ) {
