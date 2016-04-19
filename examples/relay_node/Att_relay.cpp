@@ -1,28 +1,29 @@
 #include <Automaton.h>
-#include "Atm_relay.h"
+#include "Att_relay.h"
 
-Atm_relay & Atm_relay::begin( short r_pin, short l_pin)
+Att_relay & Att_relay::begin( short r_pin, short l_pin)
     {
-      const static state_t state_table[] PROGMEM = {
+      const static tiny_state_t state_table[] PROGMEM = {
       /*            ON_ENTER    ON_LOOP    ON_EXIT    EVT_TOGGLE     ELSE */
-      /* ON   */    ACT_ON,      CYCLE_LED,         -1,       OFF,    -1,
       /* OFF  */    ACT_OFF,     CYCLE_LED,         -1,       ON,     -1,
+      /* ON   */    ACT_ON,      CYCLE_LED,         -1,       OFF,    -1,
+
 
       };
-      Machine::begin( state_table, ELSE );
+      TinyMachine::begin( state_table, ELSE );
       relay_pin = r_pin; 
       led_pin = l_pin;
       pinMode( relay_pin, OUTPUT );
       return *this;          
     }
 
-int  Atm_relay::event( int id ) 
+int  Att_relay::event( int id ) 
     {
     // events all triggered by .trigger
       return 0;
     }
 
-void  Atm_relay::action( int id )
+void  Att_relay::action( int id )
     {
       switch ( id ) {
         case ACT_ON :
@@ -49,8 +50,4 @@ void  Atm_relay::action( int id )
        }
     }
 
-Atm_relay & Atm_relay::onSwitch( swcb_sym_t switch_callback ) {
-  Machine::onSwitch( switch_callback, "OFF\0ON", "EVT_TOGGLE\0EVT_ON\0EVT_OFF\0ELSE" );
-  return *this;
-}
 

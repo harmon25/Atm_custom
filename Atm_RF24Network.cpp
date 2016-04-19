@@ -1,9 +1,9 @@
 #include <Automaton.h>
 #include "Atm_RF24Network.h"
 
-Atm_RF24Network & Atm_RF24Network::begin(uint8_t radio_channel, uint16_t node_addr)
+Att_RF24Network & Att_RF24Network::begin(uint8_t radio_channel, uint16_t node_addr)
 {
-  const static state_t state_table[] PROGMEM = {
+  const static tiny_state_t state_table[] PROGMEM = {
   /*               ON_ENTER         ON_LOOP      ON_EXIT   EVT_NEW_MSG         ELSE */
   /* IDLE  */            -1,    UPDATE_NETWORK,   -1,      RECIEVING,           -1,
   /* RECIEVING */  RECV_MSG,         -1,          -1,        -1,               IDLE,
@@ -19,19 +19,19 @@ Atm_RF24Network & Atm_RF24Network::begin(uint8_t radio_channel, uint16_t node_ad
   
   
   // begin machine
-  Machine::begin( state_table, ELSE );
+  TinyMachine::begin( state_table, ELSE );
 
   return *this; 
 }
 
 // register msg handler callback
-Atm_RF24Network & Atm_RF24Network::onMsg( msgcb_t msg_callback ) 
+Att_RF24Network & Att_RF24Network::onMsg( msgcb_t msg_callback ) 
 {
   callback = msg_callback;
   return *this;  
 }
 
-int Atm_RF24Network::event(int id)
+int Att_RF24Network::event(int id)
 {
    switch ( id )
    {  
@@ -43,13 +43,13 @@ int Atm_RF24Network::event(int id)
    return 0;
 }
 
-bool Atm_RF24Network::send(char* payload, size_t payload_len, uint8_t msg_type )
+bool Att_RF24Network::send(char* payload, size_t payload_len, uint8_t msg_type )
 {
   RF24NetworkHeader header(00, msg_type);
   return _network.write(header, payload, payload_len);
 }
 
-void Atm_RF24Network::action(int id)
+void Att_RF24Network::action(int id)
 {
  switch ( id )
   {
@@ -77,9 +77,10 @@ void Atm_RF24Network::action(int id)
     }
   }
 }
-
-Atm_RF24Network & Atm_RF24Network::onSwitch(swcb_sym_t switch_callback)
+/*
+Att_RF24Network & Att_RF24Network::onSwitch(swcb_sym_t switch_callback)
 {
   Machine::onSwitch( switch_callback, "IDLE\0RECIEVING", "EVT_NEW_MSG\0ELSE" );
   return *this;
 }
+*/

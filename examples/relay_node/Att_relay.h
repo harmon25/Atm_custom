@@ -3,22 +3,22 @@
   #include <Automaton.h>
   #include <Atm_led.h>
 
-  class Atm_relay : public Machine {
+  class Att_relay : public TinyMachine {
   
     public:
-      Atm_relay( void ) : Machine() { class_label = "RELAY"; };
+      Att_relay( void ) : TinyMachine() {};
   
       short relay_pin;
       short led_pin;
           
-      enum {ON, OFF} STATES;
+      enum {OFF, ON} STATES;
       enum {EVT_TOGGLE, ELSE } EVENTS;
       enum {ACT_OFF, ACT_ON, CYCLE_LED } ACTIONS;
 
-      Atm_led relay_led;
+      Att_led relay_led;
       
-      Atm_relay & begin( short relay_pin, short l_pin);
-      Atm_relay & onSwitch( swcb_sym_t switch_callback );
+      Att_relay & begin( short relay_pin, short l_pin);
+  
   
       int event( int id );
   

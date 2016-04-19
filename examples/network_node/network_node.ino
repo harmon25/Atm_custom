@@ -6,7 +6,7 @@
 // initalize RF24 Radio & network
 RF24 radio(9, 10);
 // initalize RF24Network Machine
-Atm_RF24Network atm_net(radio);
+Att_RF24Network att_net(radio);
 Att_timer ping_timer;
 
 // message callback declaration
@@ -22,22 +22,20 @@ void setup()
 
  
   // register custom message handler
-  atm_net.onMsg(msg_callback);
+  att_net.onMsg(msg_callback);
   // calls radio.begin and network.begin
   // channel, node address as params.
-  atm_net.begin(115, 04);
+  att_net.begin(115, 04);
   delay(250);
   // send a test payload
   char pl[] = "test payload";
-  atm_net.send(pl, sizeof(pl), 'A');
-  // debugging
-  atm_net.onSwitch(atm_serial_debug::onSwitch);
+  att_net.send(pl, sizeof(pl), 'A');
 }
 
 void loop()
 {
   // calls network.update() ON_LOOP to ensure network is up.
-  atm_net.cycle();
+  att_net.cycle();
   ping_timer.cycle();
 
 }
@@ -47,7 +45,7 @@ void timer_callback( int id, uint16_t cnt )
 {
   // Something to do when the timer goes off
   char pl[] = "test ping";
-  atm_net.send(pl, sizeof(pl), 1);
+  att_net.send(pl, sizeof(pl), 1);
   
 }
 
@@ -57,7 +55,7 @@ void msg_callback()
 {
   RF24NetworkHeader header;
   char payload[65];
-  size_t full_len = atm_net._network.read(header, &payload, sizeof(payload));
+  size_t full_len = att_net._network.read(header, &payload, sizeof(payload));
   payload[full_len] = '\0';
   Serial.println(payload);
   Serial.println("CUSTOM HANDLER");
