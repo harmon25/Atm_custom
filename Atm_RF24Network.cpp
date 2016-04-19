@@ -1,7 +1,7 @@
 #include <Automaton.h>
 #include "Atm_RF24Network.h"
 
-Atm_RF24Network & Atm_RF24Network::begin(uint16_t node_addr)
+Atm_RF24Network & Atm_RF24Network::begin(uint8_t radio_channel, uint16_t node_addr)
 {
   const static state_t state_table[] PROGMEM = {
   /*               ON_ENTER         ON_LOOP      ON_EXIT   EVT_NEW_MSG         ELSE */
@@ -10,6 +10,11 @@ Atm_RF24Network & Atm_RF24Network::begin(uint16_t node_addr)
 
    };
    // begin rf24network, with node address param
+   SPI.begin();
+   _radio.begin();
+   _radio.setChannel(radio_channel);
+   _radio.setPALevel(RF24_PA_MAX);
+
   _network.begin(node_addr);
   
   
