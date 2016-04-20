@@ -13,14 +13,17 @@
       enum { OFF, ON, BLINK_ON, BLINK_OFF } STATES; 
       enum { EVT_TIMER, EVT_COUNTER_ON,EVT_COUNTER_OFF, EVT_TOGGLE, ELSE } EVENTS; 
       enum { ACT_LED_OFF, ACT_LED_ON, ACT_RELAY_ON, ACT_RELAY_OFF } ACTIONS; 
-
+      // store prev relay state while blinking, so after blink know to blink on or off.
       bool prev_relay_state;
 
-      short repeat_on;
-      atm_timer_millis timer; // for time led is on, off during blinking phase
-      atm_counter counter;  // so on, off state can blink a different number of times...
+      short on_blink = 3;
+      short off_blink = 5;
+      atm_timer_millis timer;
+      atm_counter counter_on, counter_off;  
       
       Att_relay & begin( short relay_pin, short l_pin);
+
+      Att_relay & setBlink( short repeat, bool on_off ) ;
 
   
       int event( int id );

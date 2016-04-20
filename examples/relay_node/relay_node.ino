@@ -25,11 +25,11 @@ TinyFactory factory;
 void setup() {
   Serial.begin( 9600 );
   // init relays: relay pin, led pin
-  relay1.begin( 3, 5 );
-  relay2.begin( 4, 6 );
+  relay1.begin( 5, 7 );
+  relay2.begin( 6, 8 );
 
-  btn1.begin(1).onPress(btn_change1);
-  btn2.begin(2).onPress(btn_change2);
+  btn1.begin(3).onPress(btn_change, 1);
+  btn2.begin(4).onPress(btn_change, 2);
 
   // register custom message handler
   att_net.onMsg(msgcb);
@@ -52,25 +52,27 @@ void loop() {
 
 
 // button callback
-void btn_change1( int press )
+void btn_change( int press, int idx )
 {
   if ( press ) {
-      Serial.println(relay1.state());
-      relay1.trigger(relay1.EVT_TOGGLE);
-      char pl[] = "test payload";
-      att_net.send(pl, sizeof(pl), 'A');
-  }
-}
+      if(idx == 1)
+      {
+        Serial.println(relay1.state());
+        relay1.setBlink(0,0).setBlink(0,1);
+        relay1.trigger(relay1.EVT_TOGGLE);
+        char pl[] = "test payload";
+        att_net.send(pl, sizeof(pl), 'A');
+      }
 
-
-// button callback
-void btn_change2( int press)
-{
-  if ( press ) {
+      if(idx == 2)
+      {
       Serial.println(relay2.state());
+      relay2.setBlink(0,0).setBlink(0,1);
       relay2.trigger(relay2.EVT_TOGGLE);
       char pl[] = "test payload";
       att_net.send(pl, sizeof(pl), 'A');
+      }
+
   }
 }
 
@@ -78,10 +80,14 @@ void btn_change2( int press)
 // message callback definition
 void msgcb()
 {
+  // can use att_net._network.peek(header) to switch on msg types.
+  relay2.setBlink(10,0).setBlink(6,1);
+  relay2.trigger(relay2.EVT_TOGGLE);
+  Serial.println("CUSTOM HANDLER");
   RF24NetworkHeader header;
   char payload[65];
-  size_t full_len = att_net._network.read(header, &payload, sizeof(payload));
+  size_t full_len = att_net.network.read(header, &payload, sizeof(payload));
   payload[full_len] = '\0';
   Serial.println(payload);
-  Serial.println("CUSTOM HANDLER");
+  
 }

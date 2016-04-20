@@ -15,7 +15,7 @@ Att_RF24Network & Att_RF24Network::begin(uint8_t radio_channel, uint16_t node_ad
    _radio.setChannel(radio_channel);
    _radio.setPALevel(RF24_PA_MAX);
 
-  _network.begin(node_addr);
+  network.begin(node_addr);
   
   
   // begin machine
@@ -37,7 +37,7 @@ int Att_RF24Network::event(int id)
    {  
       // if network is available, got a new message
       case EVT_NEW_MSG :
-        return _network.available();
+        return network.available();
    }
    // no events
    return 0;
@@ -46,7 +46,7 @@ int Att_RF24Network::event(int id)
 bool Att_RF24Network::send(char* payload, size_t payload_len, uint8_t msg_type )
 {
   RF24NetworkHeader header(00, msg_type);
-  return _network.write(header, payload, payload_len);
+  return network.write(header, payload, payload_len);
 }
 
 void Att_RF24Network::action(int id)
@@ -55,7 +55,7 @@ void Att_RF24Network::action(int id)
   {
     // keep network running, needs to be run in loop, and regularly
     case UPDATE_NETWORK :
-     _network.update();
+     network.update();
      return;
     // we have a message for us to recieve
     case RECV_MSG :
@@ -69,7 +69,7 @@ void Att_RF24Network::action(int id)
         RF24NetworkHeader header;
         //_network.peek(header);
         char payload[100]; 
-        size_t full_len = _network.read(header, &payload, sizeof(payload));
+        size_t full_len = network.read(header, &payload, sizeof(payload));
         payload[full_len] = '\0';
         Serial.println(payload);
       }

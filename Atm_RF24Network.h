@@ -14,14 +14,14 @@
  
     public:
       RF24& _radio; 
-      RF24Network _network; 
+      RF24Network network; 
       //ATM States, Events, Actions, Messages
       enum { IDLE, RECIEVING} STATES;
       enum { EVT_NEW_MSG,  ELSE } EVENTS;
       enum { UPDATE_NETWORK, RECV_MSG} ACTIONS;
            
       // constructor, passes network by ref
-      Att_RF24Network( RF24 &radio ): _radio(radio), _network(radio), TinyMachine() {};
+      Att_RF24Network( RF24 &radio ): _radio(radio), network(radio), TinyMachine() {};
      
       // null ptr to be assigned message handler callback
       void (*callback)( ) = 0;
