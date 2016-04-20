@@ -4,7 +4,8 @@
 #include <Atm_RF24Network.h>
 
 Att_button btn1,btn2;    // An Atm_button machine
-Att_relay relay1, relay2; // Custom Atm_relay machine
+Att_relay relay1;
+Att_relay relay2; // Custom Atm_relay machine
 
 // initalize RF24 Radio & network
 RF24 radio(9, 10);
@@ -27,11 +28,8 @@ void setup() {
   relay1.begin( 3, 5 );
   relay2.begin( 4, 6 );
 
-  btn1.begin(1).onPress(btn_change, 1 );
-  btn2.begin(2).onPress(btn_change, 2 );
-
-  btn1.begin(1).onPress(btn_change, 1 );
-  btn2.begin(2).onPress(btn_change, 2 );
+  btn1.begin(1).onPress(btn_change1);
+  btn2.begin(2).onPress(btn_change2);
 
   // register custom message handler
   att_net.onMsg(msgcb);
@@ -54,24 +52,25 @@ void loop() {
 
 
 // button callback
-void btn_change( int press, int idx )
+void btn_change1( int press )
 {
   if ( press ) {
-     if ( idx == 1 )
-     {
-      relay1.trigger(relay1.EVT_TOGGLE);
       Serial.println(relay1.state());
+      relay1.trigger(relay1.EVT_TOGGLE);
       char pl[] = "test payload";
       att_net.send(pl, sizeof(pl), 'A');
-     }
+  }
+}
 
-     if(idx == 2)
-     {
-      relay2.trigger(relay2.EVT_TOGGLE);
+
+// button callback
+void btn_change2( int press)
+{
+  if ( press ) {
       Serial.println(relay2.state());
+      relay2.trigger(relay2.EVT_TOGGLE);
       char pl[] = "test payload";
       att_net.send(pl, sizeof(pl), 'A');
-     }
   }
 }
 
